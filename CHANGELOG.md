@@ -6,6 +6,7 @@ All notable changes to `baoyu-design` are tracked in this file.
 
 ### Added
 
+- Added the `design-system-preview` built-in skill (ported from claude-design-v2): `agents/build-preview.mjs` compiles a design system folder (its `_ds_manifest.json` cards, starting points, and `readme.md`) into one self-contained interactive `preview.html` — outline nav, rendered Readme, and scaled live cards isolated via declarative Shadow DOM, no iframes. Authoring flows (`design-system-authoring-guide.md`, `create-design-system.md`) now end by generating `preview.html` into the design-system directory, and it is documented as a generated artifact alongside `_ds_bundle.js`/`_ds_manifest.json`. React/ReactDOM UMDs are vendored into `agents/vendor/` so the default build is offline.
 - Added end-to-end design-system support so a design project can follow an existing system: discovery, a sync step that copies a self‑contained, version‑pinned copy into `<project>/_ds/<slug>/`, page wiring, a generated per‑load binding prompt (`_ds_prompt.md`), and the binding recorded in `<project>/_d_meta.json` — documented in the new `use-design-system.md` built‑in skill.
 - Added a portable design-system authoring pipeline: a compiler that bundles a system's tokens and React components for loading, a read-only checker (with a matching checker subagent) that validates a system without writing, and the `design-system-authoring-guide.md` flow.
 - Added asset recording that indexes a project's deliverables and their review status in `_d_meta.json`, bootstrapping that metadata even when no design system is used.
@@ -23,6 +24,15 @@ All notable changes to `baoyu-design` are tracked in this file.
 - Clarified that final design and prototype delivery should include the running preview, not only the generated file.
 - Updated Claude Code, Codex Agent, and Cursor harness references to make final preview handoff visible to the user after verification.
 - Updated the English and Simplified Chinese README files to document Codex Agent support, the new `references/codex.md` harness map, install examples, usage notes, and changelog links.
+
+### Fixed
+
+- Fixed the compiler's token extraction mis-reading BEM-with-pseudo-class CSS rules (e.g. `.s2-btn--primary:hover { … }`) as custom-property declarations, which produced phantom tokens like `--primary` in `_ds_manifest.json`; declaration matches whose value contains a brace are now skipped (`agents/lib/ds-core.mjs`).
+- The generated `preview.html` now forces `color-scheme: light` on the page and on every card host, so design systems using `light-dark()` tokens render light inside the light pane chrome instead of following the viewer's OS dark mode (explicitly dark subtrees still render dark; systems keyed off `prefers-color-scheme` media queries remain a documented limit).
+- Card previews in `preview.html` no longer show scrollbars when content overflows the declared viewport — overflow stays scrollable but the scrollbar chrome is hidden via a base stylesheet injected into each card's shadow root.
+- Card previews in `preview.html` no longer clip content taller than the declared viewport: the declared height now acts as a minimum and each card grows to its measured content height (re-measured as React commits, fetches resolve, images decode, and fonts load, with a monotonic guard and a 4000px cap so container-relative content can't ratchet the height forever). The card root also sizes as `border-box`, keeping body padding inside the declared viewport like a real page.
+- Tall cards in `preview.html` no longer show a white band inside the right edge of their frame: card scaling is now width-only (`scale = min(containerWidth/designW, 1)`) instead of also clamping to a 500px max height — the height clamp shrank grown cards below the frame width, exposing the frame's white background — and the frame now shrink-wraps the scaled stage. The `--max-height` flag is gone with the clamp.
+- Relative `fetch()` URLs in card scripts are now rebased to the card's source directory (cards are re-rooted into the single preview file), and when any card fetches, the project's small asset files (svg/png/json/… capped at 3 MB total) are inlined and served from memory — fixing icon/JSON fetches both over HTTP and file://, where they previously 404'd or were CORS-blocked.
 
 ## 2026-06-06
 
