@@ -61,6 +61,7 @@ The result lists flags. **These are warnings, not errors** — read each message
 - `notes_count_mismatch` — #speaker-notes length ≠ slides length. Notes attach by index so the tail will be wrong.
 - `no_speaker_notes` — deck has no #speaker-notes tag. Expected if there are no notes.
 - `fonts_timeout` — fonts.ready took >8s. Font URLs may be unreachable.
+- `font_swap_failed` — one or more `fontSwaps` targets never loaded (misspelled family, or Google Fonts doesn't serve it), so the deck was laid out with a fallback while the file names the swap font. Retry with a corrected or different family, or fall back to web-safe fonts. Whatever you do next, tell the user plainly which fonts couldn't be applied — e.g. "Heads up: Poppins couldn't be loaded during export, so the deck uses a stand-in font and text may wrap differently. Want me to try a different font?"
 - `images_failed` — images didn't decode before capture. Usually a 404 or CORS.
 - `reset_selector_miss` — your `resetTransformSelector` matched nothing.
 
