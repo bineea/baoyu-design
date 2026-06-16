@@ -7,17 +7,11 @@ description: >-
   the user asks to design, mock up, prototype, wireframe, visualize, explore, or make a
   PPT/deck for an interface, product screen, user flow, content layout, visual artifact,
   or pitch/deck concept, even if they do not say "design". Also use to export a deck
-  built with this skill to PowerPoint (.pptx) when the user asks to export/save/turn a
-  deck into PPT, PPTX, or PowerPoint — note this exports decks authored here (the
-  deck-stage / slide-structured HTML this skill produces), NOT arbitrary HTML files, so
-  confirm the target is such a deck before exporting. Also use for setting up, importing, or authoring reusable design
-  systems, UI kits, brand tokens, component libraries, or loadable design-system
-  bundles. The skill guides context gathering, clarifying questions, choosing
-  fidelity, selecting or binding design systems, creating project folders, building
-  one or more HTML deliverables, previewing them, and verifying they load cleanly.
-  It is harness-agnostic for Claude Code, Cursor, Codex Agent, and similar
-  file-capable agents; harness-specific ask, preview, screenshot, and verification
-  tools are resolved from references/.
+  built with this skill to PowerPoint (PPT/PPTX) — but only decks authored here
+  (deck-stage / this skill's slide-structured HTML), NOT arbitrary HTML, so confirm the
+  target is such a deck first. Also use for setting up, importing, or authoring reusable
+  design systems, UI kits, brand tokens, or component libraries. Harness-agnostic for
+  Claude Code, Cursor, Codex Agent, and similar file-capable agents.
 ---
 
 # Design
