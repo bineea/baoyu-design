@@ -472,7 +472,26 @@ export function renderNodeToPptx(node: SlideNode, ctx: RenderContext): void {
     }
   }
 
-  for (const child of node.children) if (!consumed.has(child)) renderNodeToPptx(child, ctx);
+  for (const child of orderByZIndex(node.children))
+    if (!consumed.has(child)) renderNodeToPptx(child, ctx);
+}
+
+// Paint children in CSS stacking order: positioned siblings with a numeric
+// z-index layer by that value (higher = painted later = on top); everything
+// else keeps DOM order. Returns the original array untouched when no positioned
+// child carries a non-zero z-index, so the common case is unaffected.
+function orderByZIndex(children: SlideNode[]): SlideNode[] {
+  const zOf = (n: SlideNode): number => {
+    const pos = n.style.position;
+    if (pos !== "relative" && pos !== "absolute" && pos !== "fixed" && pos !== "sticky") return 0;
+    const v = parseInt(n.style.zIndex ?? "", 10);
+    return Number.isNaN(v) ? 0 : v;
+  };
+  if (children.every((c) => zOf(c) === 0)) return children;
+  return children
+    .map((c, i) => ({ c, z: zOf(c), i }))
+    .sort((a, b) => a.z - b.z || a.i - b.i)
+    .map((x) => x.c);
 }
 
 function errMsg(err: unknown): string {
